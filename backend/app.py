@@ -5,8 +5,9 @@ app = Flask(__name__)
 CORS(app)
 
 @app.route('/', methods=['GET'])
-def hello():
-    return("This is a linked knowledge system!")
+def list():
+    nodes = [ {"name": "Node 1"}, {"name": "Node 2"}]
+    return jsonify(nodes)
 
 if __name__ == "__main__":
     app.run(debug=True)
