@@ -8,6 +8,47 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
 </head>
 <style>
+    a{
+        text-decoration: none;
+    }
+    .nav-top {
+        width: 100%;
+        margin: auto;
+        font-size: 12px;
+        margin-top: 1rem;
+    }
+
+    .nav-top a.active {
+        background-color: rgb(226, 220, 220);
+        border: 1px solid hsla(160, 100%, 37%, 1);
+        font-weight: 600;
+    }
+
+    .nav-top a.router-link-exact-active:hover {
+        background-color: transparent;
+    }
+
+    .nav-top a {
+        display: inline-block;
+        padding: 0 1rem;
+        font-size: 20px;
+        color: hsla(160, 100%, 37%, 1);
+    }
+
+    .nav-top a:first-of-type {
+        border: 0;
+    }
+
+    @media (min-width: 1024px) {
+        .nav-top {
+            text-align: left;
+            font-size: 1rem;
+
+            padding: 1rem 0;
+            margin-top: 1rem;
+        }
+    }
+
     .list-node {
         border: 1px solid gainsboro;
         border-radius: 5px;
@@ -24,13 +65,19 @@
         border: 2px solid #6798e2;
     }
 </style>
+
 <body>
-    <nav class="navbar bg-body-tertiary">
+    <nav class="nav-top">
+        <div class="container-fluid" style="width: 85%;">
+            <a class="active" href="http://localhost:5001">Home</a>
+            <a href="http://localhost:5173">Network</a>
+        </div>
+    </nav>
+    <nav class="navbar">
         <div class="container-fluid" style="width: 85%;">
             <a class="navbar-brand"><img src="{{ url_for('static', filename='logo.png')}}" width="45"
                     alt="Neo4j World's Leading Graph Database" id="logo">
                 Neo4j Hệ Điều Hành</a>
-    <a href="http://localhost:5173">Graph</a>
             <button type="button" class="btn btn-success ms-auto me-4" data-bs-toggle="modal"
                 data-bs-target="#add-child-node">
                 Thêm kiến thức mới
@@ -135,11 +182,11 @@
                     <tr class="parent-select">
                         <td class="fw-semibold text-capitalize">
                             <a href="/detail/{{ node.labels }}" style="color: black; text-decoration: none;">
-                                 {{ node.Title }}
+                                {{ node.Title }}
                             </a>
                         </td>
                         <td>
-                            {{ node.Concept }} 
+                            {{ node.Concept }}
                         </td>
                         <td>
                             <div class="d-flex gap-2">
@@ -201,35 +248,35 @@
 </body>
 <script>
     function addProperty() {
-    var additionalProperties = document.getElementById('additional-properties');
+        var additionalProperties = document.getElementById('additional-properties');
 
-    var propertyDiv = document.createElement('div');
-    propertyDiv.classList.add('mb-3', 'property-group');
+        var propertyDiv = document.createElement('div');
+        propertyDiv.classList.add('mb-3', 'property-group');
 
-    var namePropertyInput = document.createElement('input');
-    namePropertyInput.setAttribute('name', 'property_name');
-    namePropertyInput.setAttribute('class', 'form-control mt-2');
-    namePropertyInput.setAttribute('placeholder', 'Tên thuộc tính');
+        var namePropertyInput = document.createElement('input');
+        namePropertyInput.setAttribute('name', 'property_name');
+        namePropertyInput.setAttribute('class', 'form-control mt-2');
+        namePropertyInput.setAttribute('placeholder', 'Tên thuộc tính');
 
-    var valuePropertyInput = document.createElement('input');
-    valuePropertyInput.setAttribute('name', 'property_value');
-    valuePropertyInput.setAttribute('class', 'form-control mt-2');
-    valuePropertyInput.setAttribute('placeholder', 'Nội dung');
+        var valuePropertyInput = document.createElement('input');
+        valuePropertyInput.setAttribute('name', 'property_value');
+        valuePropertyInput.setAttribute('class', 'form-control mt-2');
+        valuePropertyInput.setAttribute('placeholder', 'Nội dung');
 
-    var removeButton = document.createElement('button');
-    removeButton.setAttribute('type', 'button');
-    removeButton.setAttribute('class', 'btn btn-danger mt-2');
-    removeButton.textContent = 'Xóa';
-    removeButton.onclick = function () {
-        additionalProperties.removeChild(propertyDiv);
-    };
+        var removeButton = document.createElement('button');
+        removeButton.setAttribute('type', 'button');
+        removeButton.setAttribute('class', 'btn btn-danger mt-2');
+        removeButton.textContent = 'Xóa';
+        removeButton.onclick = function () {
+            additionalProperties.removeChild(propertyDiv);
+        };
 
-    propertyDiv.appendChild(namePropertyInput);
-    propertyDiv.appendChild(valuePropertyInput);
-    propertyDiv.appendChild(removeButton);
+        propertyDiv.appendChild(namePropertyInput);
+        propertyDiv.appendChild(valuePropertyInput);
+        propertyDiv.appendChild(removeButton);
 
-    additionalProperties.appendChild(propertyDiv);
-}
+        additionalProperties.appendChild(propertyDiv);
+    }
 
 
 

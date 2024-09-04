@@ -4,9 +4,9 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <nav>
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/about">About</RouterLink>
-    </nav>
+    <a href="http://localhost:5001">Home</a>
+    <a class="active" href="http://localhost:5173">Network</a>
+  </nav>
   <RouterView />
 </template>
 
@@ -18,8 +18,10 @@ nav {
   margin-top: 1rem;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+nav a.active {
+  background-color: rgb(226, 220, 220);
+  border: 1px solid;
+  font-weight: 600;
 }
 
 nav a.router-link-exact-active:hover {
@@ -29,7 +31,8 @@ nav a.router-link-exact-active:hover {
 nav a {
   display: inline-block;
   padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+  border-left: 3px solid var(--color-border);
+  font-size: 20px;
 }
 
 nav a:first-of-type {
