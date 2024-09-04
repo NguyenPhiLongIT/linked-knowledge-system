@@ -63,7 +63,7 @@
             <div class="modal fade" id="edit-node-{{ node.labels }}" tabindex="-1" aria-labelledby="exampleModalLabel">
                 <div class="modal-dialog">
                     <div class="modal-content">
-                        <form id="editNodeForm-{{node.Title}}" method="POST" action="/edit-node" class="form-control">
+                        <form id="editNodeForm-{{ node.labels }}" method="POST" action="/edit-node" class="form-control">
                             {% for key, value in node.items() %}
                             {% if key != 'labels' %}
                             <div class="mb-3">
