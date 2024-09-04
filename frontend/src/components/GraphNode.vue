@@ -65,7 +65,7 @@ const configs = reactive(
           const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id(d => d.id)
           return d3
             .forceSimulation(nodes)
-            .force("edge", forceLink.distance(50).strength(0.5))
+            .force("edge", forceLink.distance(50).strength(0.45))
             .force("charge", d3.forceManyBody().strength(-150))
             .alphaMin(0.001)
         }
@@ -73,7 +73,7 @@ const configs = reactive(
     },
     node: {
       normal: {
-        color: n => (n.id === "node0" ? "#ff0000" : "#4466cc"),
+        color: n => (n.id === 0 ? "#ff0000" : "#4466cc"),
         radius: 38,
       },
       label: {
