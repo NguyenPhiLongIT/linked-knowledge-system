@@ -4,8 +4,10 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <template>
   <nav>
-    <a href="http://localhost:5001">Home</a>
-    <a class="active" href="http://localhost:5173">Network</a>
+    <div class="container">
+      <a href="http://localhost:5001">Home</a>
+      <a class="active" href="http://localhost:5173">Network</a>
+    </div>
   </nav>
   <RouterView />
 </template>
@@ -16,6 +18,11 @@ nav {
   width: 100%;
   font-size: 12px;
   margin-top: 1rem;
+}
+
+.container{
+  padding-left: 1.5rem;
+  padding-right: 1.5rem
 }
 
 nav a.active {
