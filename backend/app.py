@@ -118,14 +118,6 @@ def search():
             nodes = session.run(many_key_cmd)
             for record in nodes:
                 node = record["n"]
-                # Convert the node to a dictionary
-                # print(node)
-                # print("node", list(node.labels)[0])
-                # print(
-                #     "node._properties",
-                #     node._properties["Concept"],
-                #     node._properties["Title"],
-                # )
                 node_data = {"labels": format(node["Title"]), **node._properties}
                 nodes_list.append(node_data)
                 print(node_data)
