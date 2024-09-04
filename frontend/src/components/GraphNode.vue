@@ -7,7 +7,7 @@
 <template>
   <section class="wrapper">
 
-    <v-network-graph :zoom-level="2" :nodes="nodes" :edges="edges" :layouts="layouts" :configs="configs">
+    <v-network-graph :zoom-level="1.75" :nodes="nodes" :edges="edges" :layouts="layouts" :configs="configs">
     <template
       #override-node-label="{
         nodeId, scale, text, x, y, config, textAnchor, dominantBaseline
@@ -65,8 +65,8 @@ const configs = reactive(
           const forceLink = d3.forceLink<ForceNodeDatum, ForceEdgeDatum>(edges).id(d => d.id)
           return d3
             .forceSimulation(nodes)
-            .force("edge", forceLink.distance(60).strength(0.2))
-            .force("charge", d3.forceManyBody().strength(-120))
+            .force("edge", forceLink.distance(50).strength(0.5))
+            .force("charge", d3.forceManyBody().strength(-150))
             .alphaMin(0.001)
         }
       }),
