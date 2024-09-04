@@ -1,6 +1,8 @@
 <template>
   <div class="about">
     <h1>This is an about page</h1>
+    <h1>Welcome to Vue.js Server</h1>
+    <a href="http://localhost:5001">Go to Flask Server</a>
   </div>
 </template>
 

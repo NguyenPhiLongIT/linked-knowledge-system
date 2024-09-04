@@ -7,7 +7,7 @@
 <template>
   <section class="wrapper">
     <v-network-graph
-    :zoom-level="1.35"
+    :zoom-level="5"
     :nodes="nodes"
     :edges="edges"
     :layouts="layouts"
@@ -74,18 +74,17 @@ const configs = reactive(
 getNetwork()
 
 function getNetwork() {
-  const path = 'http://localhost:5000';
+  const path = 'http://localhost:5001/graph';
   axios.get(path)
     .then((res) => {
       const knowledgeNodes = res.data.nodes;
       const realationEdges = res.data.edges;
 
       const newNodes = {}
-      knowledgeNodes.forEach((node, index) => {
-        newNodes[`node${index}`] = { name: node.name }
+      knowledgeNodes.forEach((node) => {
+        newNodes[`node${node.id}`] = { id:node.id,name: node.name }
       })
       nodes.value = newNodes
-
       const newEdges = {}
       realationEdges.forEach((edge, index) => {
         newEdges[`edge${index}`] = { source: edge.source, target: edge.target }
