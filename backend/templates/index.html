@@ -170,7 +170,7 @@
                                     aria-labelledby="exampleModalLabel">
                                     <div class="modal-dialog">
                                         <div class="modal-content">
-                                            <form id="editNodeForm-{{node.Title}}" method="POST" action="/edit-node"
+                                            <form id="editNodeForm-{{node.labels}}" method="POST" action="/edit-node"
                                                 class="form-control">
                                                 {% for key, value in node.items() %}
                                                 {% if key != 'labels' %}

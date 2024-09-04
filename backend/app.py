@@ -36,34 +36,31 @@ CORS(app)
 @app.route("/")
 def home():
     global dict
+    # print(dict)
     global arrPolarityTerm
     cmd = ""
     with driver.session() as session:
-        result = session.run(show()).data()
+        result = session.run(show())
         nodes = []
         for r in result:
             root = r["n"][0]
+            print(r["n"])
             # print(root)
-            node_data = {
-                "labels": format(root["Title"]),
-                "Title": root["Title"],
-                "Concept": root["Concept"],
-            }
-            print(node_data)
+            node_data = {"labels": format(root["Title"]), **root._properties}
             nodes.append(node_data)
             node_child = r["end"]
             print(node_child)
-            for i in range(0,len(node_child)):
+            for node in node_child:
                 node_data = {
-                    "labels": format(node_child[i]["Title"]),
-                    "Title": node_child[i]["Title"],
-                    "Concept": node_child[i]["Concept"],
+                    "labels": format(node["Title"]),
+                    **node._properties,
                 }
                 nodes.append(node_data)
         titles = session.run("MATCH (n) RETURN n.Title AS Titles")
         for record in titles:
             title = record["Titles"]
             arrPolarityTerm.append(title)
+
     return render_template("index.html", dict=dict, nodes=nodes)
 
 
@@ -99,7 +96,7 @@ def search():
     keyword = request.form.get("query")
     key = clean_title(request.form.get("query").upper())  # dùng cho nhiều keyword
     one_key = format(request.form.get("query"))
-    print("one_key", one_key)
+    # print("one_key", one_key)
     nodes_list = []
     one_key_cmd = (
         'MATCH (n) WHERE any(label IN labels(n) WHERE label CONTAINS "'
@@ -122,14 +119,16 @@ def search():
             for record in nodes:
                 node = record["n"]
                 # Convert the node to a dictionary
-                print("node", list(node.labels)[0])
-                print(
-                    "node._properties",
-                    node._properties["Concept"],
-                    node._properties["Title"],
-                )
-                node_data = {"labels": list(node.labels)[0], **node._properties}
+                # print(node)
+                # print("node", list(node.labels)[0])
+                # print(
+                #     "node._properties",
+                #     node._properties["Concept"],
+                #     node._properties["Title"],
+                # )
+                node_data = {"labels": format(node["Title"]), **node._properties}
                 nodes_list.append(node_data)
+                print(node_data)
             # if len(nodes_list) == 0:
 
         except Exception as e:
@@ -177,7 +176,7 @@ def create_node():
         flash(f"Thêm kiến thức thất bại! {e}", "error")
         print(f"Error: {e}")
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
 @app.route("/delete-node", methods=["POST"])
@@ -192,7 +191,7 @@ def delete_node():
         flash(f"Xóa kiến thức thất bại! {e}", "error")
         print(f"Error: {e}")
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
 @app.route("/edit-node", methods=["POST"])
@@ -219,7 +218,7 @@ def edit_node():
         flash(f"Sửa kiến thức thất bại! {e}", "error")
         print(f"Error: {e}")
 
-    return redirect(url_for("index"))
+    return redirect(url_for("home"))
 
 
 @app.route("/detail/<labels>")
@@ -228,46 +227,41 @@ def detail_node(labels):
     before_list = []
     after_list = []
     relationship_list = []
+    node_data = {}
     try:
         with driver.session() as session:
             before = session.run(
                 create_query(labels, 0)
             )  # lấy ds tất cả node r liên quan phải có trước
+
             after = session.run(
                 create_query(labels, 1)
             )  # lấy ds tất cả node r liên quan có sau
-            for start in before:
-                relationship_cmd = (
-                    'MATCH ()-[r]->()\nwhere elementId(r)= "'
-                    + start["r"].element_id
-                    + '"\nRETURN type(r) as type'
-                )
-                relationship = session.run(relationship_cmd)
-                type_r = relationship.data()[0]["type"]
-                relationship_list.append(type_r)
+            for start, r, end in before:
+                # print("start", start["Title"])
+                # print("r", r.type)
+                # print("end", end)
                 before_node = {
-                    "labels": list(start["startNode"].labels)[0],
-                    "title": start["startNode"]["Title"],
+                    "labels": format(start["Title"]),
+                    "title": start["Title"],
                 }
                 before_list.append(before_node)
-            for end in after:
+                relationship_list.append(r.type)
+            for start, r, end in after:
                 after_node = {
-                    "labels": list(end["endNode"].labels)[0],
-                    "title": end["endNode"]["Title"],
+                    "labels": format(end["Title"]),
+                    "title": end["Title"],
                 }
                 after_list.append(after_node)
             command = 'MATCH (n) \nWHERE "' + labels + '"IN labels(n)\nRETURN n'
             result = session.run(command)
-
             for record in result:
                 node = record["n"]
-                # Convert the node to a dictionary
-                node_data = {"labels": list(node.labels)[0], **node._properties}
-                # print("node", node._properties)
+                print(node)
+                node_data = {"labels": format(node["Title"]), **node._properties}
             # global dict
     except Exception as e:
         print(f"Error: {e}")
-
     return render_template(
         "detail.html",
         dict=dict,
