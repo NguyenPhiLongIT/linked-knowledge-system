@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+</head>
+
+<body>
+    <nav class="navbar bg-body-tertiary">
+        <div class="container-fluid" style="width: 85%;">
+            <a class="navbar-brand"><img src="{{ url_for('static', filename='logo.png')}}" width="45"
+                    alt="Neo4j World's Leading Graph Database" id="logo">
+                Neo4j Hệ Điều Hành</a>
+            <div style="width: 30%;">
+                <form class="d-flex" role="search" action="{{ url_for('search') }}" method="POST">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"
+                        name="query">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+
+        </div>
+    </nav>
+    {% with errors = get_flashed_messages(category_filter=["error"]) %}
+    {% if errors %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <ul>
+            {%- for msg in errors %}
+            <li>{{ msg }}</li>
+            {% endfor -%}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+    {% if messages %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <!-- Chỉ hiển thị thông báo đầu tiên -->
+        <p>{{ messages[0] }}</p>
+
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div class="container mt-3">
+        <button type="button" class="btn btn btn-light d-flex align-items-center gap-2 px-3 fs-5 mb-2">
+            <a href="/" style="text-decoration: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+                </svg>
+                Back
+            </a>
+        </button>
+        <h2>Search Results for "{{ query }}"</h2>
+        <h5>Đây là một số thuật ngữ liên quan đến câu hỏi của bạn:</h5>
+        {% if results %}
+        <table class="table-node table table-striped" id="table">
+            <thead>
+                <tr>
+                    <th scope="col" style="width: 20%;">Tiêu đề</th>
+                    <th scope="col" style="width: 65%;">Nội dung</th>
+                    <th scope="col" style="width: 15%;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                {% for item in results %}
+                <tr class="parent-select">
+                    <td class="fw-semibold text-capitalize">
+                        <a href="/detail/{{ item.labels }}" style="color: black; text-decoration: none;">
+                            {{ item.title }} {{ item.Title }}
+                        </a>
+                    </td>
+                    <td>
+                        {{ item.Concept }} {{ item.concept }}
+                    </td>
+                    <td>
+                        <div class="d-flex gap-2">
+                            <form action="/delete-node" method="post"
+                                onsubmit="return confirm('Bạn có chắc muốn xóa kiến thức này?');">
+                                <input type="hidden" name="Title" value="{{ item.Title }}" />
+                                <button class="btn btn-danger">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                        class="bi bi-trash3-fill" viewBox="0 0 16 16">
+                                        <path
+                                            d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                    </svg>
+                                </button>
+                            </form>
+
+                            <button class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#edit-node-{{ item.labels }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path
+                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                    <path fill-rule="evenodd"
+                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                </svg>
+                            </button>
+
+                            <div class="modal fade" id="edit-node-{{ item.labels }}" tabindex="-1"
+                                aria-labelledby="exampleModalLabel">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form id="editNodeForm-{{item.Title}}" method="POST" action="/edit-node"
+                                            class="form-control">
+                                            {% for key, value in item.items() %}
+                                            {% if key != 'labels' %}
+                                            <div class="mb-3">
+                                                <label for="{{ key }}">{{ dict[key] | capitalize }}: </label>
+                                                <input id="{{ key }}" name="{{ key }}" value="{{ value }}"
+                                                    class="form-control" {% if key=='Title' %}readonly{% endif %} required/>
+                                            </div>
+                                            {%endif%}
+                                            {% endfor %}
+                                            <button class="btn btn-primary mt-2" type="submit"
+                                                id="submit-form">Save</button>
+                                            <button type="button" class="btn btn-secondary mt-2"
+                                                data-bs-dismiss="modal">Close</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No results found.</p>
+        {% endif %}
+    </div>
+</body>
+
+<script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+
+</html>

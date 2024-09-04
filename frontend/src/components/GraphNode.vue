@@ -6,13 +6,28 @@
 
 <template>
   <section class="wrapper">
-    <v-network-graph
-    :zoom-level="1.35"
-    :nodes="nodes"
-    :edges="edges"
-    :layouts="layouts"
-    :configs="configs"
-  />
+
+    <v-network-graph :zoom-level="2" :nodes="nodes" :edges="edges" :layouts="layouts" :configs="configs">
+    <template
+      #override-node-label="{
+        nodeId, scale, text, x, y, config, textAnchor, dominantBaseline
+      }"
+    >
+      <text
+        x="0"
+        y="-10"
+        :font-size="14 * scale"
+        text-anchor="middle"
+        dominant-baseline="central"
+        fill="#ffffff"
+      >
+      <tspan v-for="(line, index) in text.split(' ')" :key="index" :x="0" :dy="index === 0 ? '0em' : '1em'">
+        {{ line }}
+      </tspan>
+      </text>
+    </template>
+  </v-network-graph>
+
   </section>
 </template>
 
@@ -25,8 +40,6 @@ import {
   ForceEdgeDatum,
 } from "v-network-graph/lib/force-layout"
 import axios from "axios"
-
-// const NODE_COUNT = 1
 
 const nodes = ref({})
 const edges = ref({})
@@ -61,31 +74,52 @@ const configs = reactive(
     node: {
       normal: {
         color: n => (n.id === "node0" ? "#ff0000" : "#4466cc"),
-        radius: 32,
+        radius: 38,
       },
       label: {
         visible: true,
         fontSize: 14,
       },
     },
+    edge: {
+      marker: {
+        source: {
+          type: "none",
+          width: 4,
+          height: 4,
+          margin: -1,
+          offset: 0,
+          units: "strokeWidth",
+          color: null,
+        },
+        target: {
+          type: "arrow",
+          width: 4,
+          height: 4,
+          margin: -1,
+          offset: 0,
+          units: "strokeWidth",
+          color: null,
+        },
+      },
+    }
   })
 )
 
 getNetwork()
 
 function getNetwork() {
-  const path = 'http://localhost:5000';
+  const path = 'http://localhost:5001/graph';
   axios.get(path)
     .then((res) => {
       const knowledgeNodes = res.data.nodes;
       const realationEdges = res.data.edges;
 
       const newNodes = {}
-      knowledgeNodes.forEach((node, index) => {
-        newNodes[`node${index}`] = { name: node.name }
+      knowledgeNodes.forEach((node) => {
+        newNodes[`node${node.id}`] = { id:node.id,name: node.name }
       })
       nodes.value = newNodes
-
       const newEdges = {}
       realationEdges.forEach((edge, index) => {
         newEdges[`edge${index}`] = { source: edge.source, target: edge.target }
@@ -97,24 +131,4 @@ function getNetwork() {
       console.error(err);
     });
 }
-
-// buildNetwork(NODE_COUNT, nodes, edges)
-
-// function buildNetwork(count: number, nodes: vNG.Nodes, edges: vNG.Edges) {
-//   const idNums = [...Array(count)].map((_, i) => i)
-
-//   // nodes
-//   const newNodes = idNums.map(id => [`node${id}`, { id: `node${id}` }])
-//   Object.assign(nodes, Object.fromEntries(newNodes))
-
-//   // edges
-//   const makeEdgeEntry = (id1: number, id2: number) => {
-//     return [`edge${id1}-${id2}`, { source: `node${id1}`, target: `node${id2}` }]
-//   }
-//   const newEdges = []
-//   for (let i = 1; i < count; i++) {
-//     newEdges.push(makeEdgeEntry(Math.floor(i / 4), i))
-//   }
-//   Object.assign(edges, Object.fromEntries(newEdges))
-// }
 </script>
