@@ -1,4 +1,4 @@
-# linked-knowledge-system
+# linked-knowledge-system - Đây bản upgrade từ https://github.com/ThuongPhan662003/Neo4j-OperationSystem.git
 # Đề tài NCKH: Nghiên cứu biểu diễn kiến thức môn Hệ điều hành vào hệ quản trị cơ sở dữ liệu Neo4J
 - Biểu diễn tri thức một lĩnh vực (ở đây là hệ điều hành) theo mô hình phân cấp cho mục đích dễ nắm bắt kiến thức.
 - Ứng dụng Neo4J giúp biểu diễn các khái niệm của một lĩnh vực theo cách trực quan và linh hoạt hơn.
